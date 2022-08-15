@@ -41,6 +41,9 @@ const AudioUnitParameterID myParam1 = 0;
 	[self setupAudioBuses];
 	[self setupParameterTree];
 	[self setupParameterCallbacks];
+    
+    self.maximumFramesToRender = 512;
+    
     return self;
 }
 
@@ -104,14 +107,6 @@ const AudioUnitParameterID myParam1 = 0;
 }
 
 #pragma mark - AUAudioUnit Overrides
-
-- (AUAudioFrameCount)maximumFramesToRender {
-	return 512;
-}
-
-- (void)setMaximumFramesToRender:(AUAudioFrameCount)maximumFramesToRender {
-    self.maximumFramesToRender = maximumFramesToRender;
-}
 
 // If an audio unit has input, an audio unit's audio input connection points.
 // Subclassers must override this property getter and should return the same object every time.

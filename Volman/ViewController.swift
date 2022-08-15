@@ -25,6 +25,7 @@ class ViewController: NSViewController {
         addPluginView()
         
         audioPlayer = AudioPlayer(url)
+        connectAudioUnitWithPlayer()
         audioPlayer.play()
     }
     
@@ -40,6 +41,23 @@ class ViewController: NSViewController {
         let auView = pluginVC.view
         auView.frame = auContainer.bounds
         auContainer.addSubview(auView)
+    }
+    
+    private func connectAudioUnitWithPlayer() {
+        var componentDescription = AudioComponentDescription()
+        componentDescription.componentType = kAudioUnitType_Effect
+        componentDescription.componentSubType = 0x56506c75 // "Vplu"   https://codebeautify.org/string-hex-converter
+        componentDescription.componentManufacturer = 0x596f6f47 // "YooG"
+        componentDescription.componentFlags = 0
+        componentDescription.componentFlagsMask = 0
+        
+        AUAudioUnit.registerSubclass(VPlugAudioUnit.self, as: componentDescription, name: "YooG: VPlug", version: UInt32.max)
+        audioPlayer.selectAudioUnitWithComponentDescription(componentDescription) {
+            guard let audioUnit = self.audioPlayer.audioUnit as? VPlugAudioUnit else {
+                fatalError("playEngine.testAudioUnit nil or cast failed")
+            }
+            self.pluginVC.audioUnit = audioUnit
+        }
     }
 
     override var representedObject: Any? {
